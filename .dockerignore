@@ -1,0 +1,8 @@
+README.md
+.pre-commit*
+.gitignore
+__pycache__/
+*.pyc
+.env
+venv/
+env/
