@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  app:
+    build: .
+    volumes:
+      - .:/src
+    ports: 
+      - "8000:8000"
+    networks:
+      - foodapp_network
+
+  db:
+    image: postgres:12-alpine
+    environment:
+      - POSTGRES_USER=foodapp_dbadmin
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=foodapp
+    networks:
+      - foodapp_network
+    depends_on:
+      - "app"
+
+networks:
+  foodapp_network:
