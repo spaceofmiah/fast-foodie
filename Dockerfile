@@ -11,9 +11,11 @@ WORKDIR     /home
 
 COPY        ./src .
 COPY        ./entrypoint.sh .
+COPY        config.ini .
 
 RUN         chown foodieadmin entrypoint.sh \
-            && chmod 755 ./entrypoint.sh 
+            && chmod 755 ./entrypoint.sh \
+            && mkdir alembic && cd alembic && alembic init .
 
 USER        foodieadmin
 
