@@ -1,0 +1,9 @@
+[tool.black]
+extend-exclude = '''
+(
+  ^/foo.py    
+  | __init__.py
+  | .local/lib/*
+  | __pycache__/*
+)
+'''
