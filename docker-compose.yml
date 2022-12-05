@@ -9,6 +9,8 @@ services:
       - "8000:8000"
     networks:
       - foodapp_network
+    volumes:
+      - .:/home
 
   db:
     image: postgres:12-alpine
