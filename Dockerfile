@@ -10,16 +10,15 @@ RUN         pip install -r requirements.txt \
 WORKDIR     /home
 
 COPY        ./src .
-COPY        ./entrypoint.sh .
+COPY        pyproject.toml .
 COPY        config.ini .
 
 RUN         chown foodieadmin entrypoint.sh \
-            && chmod 755 ./entrypoint.sh \
+            && chmod 755 entrypoint.sh \
             && mkdir alembic && cd alembic && alembic init .
 
 USER        foodieadmin
 
 EXPOSE      8000
 
-CMD ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
-# ENTRYPOINT  [ "./entrypoint.sh" ]
+CMD ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000", "--app-dir", "src"]
