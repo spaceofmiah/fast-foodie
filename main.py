@@ -1,5 +1,5 @@
 import logging
-from typing import List
+from typing import List, Dict
 
 from sqlalchemy.orm import Session
 
@@ -24,4 +24,15 @@ def list_foods(session:Session=Depends(get_db)):
 def create_food(food:food_schema.FoodCreate, session:Session=Depends(get_db)):
     """Create a food instance"""
     return food_service.create(session=session, food=food)
+
+@app.get('/foods/{food_id}/', response_model=food_schema.Food)
+def get_food(food_id:int, session:Session=Depends(get_db)):
+    """Retrieve a unique food instance"""
+    return food_service.get(session=session, food_id=food_id)
+
+@app.delete('/foods/{food_id}/', response_model=Dict[str, str])
+def delete_food(food_id:int, session:Session=Depends(get_db)):
+    """Deletes a unique food instance"""
+    food_service.delete(session=session, food_id=food_id)
+    return {"msg": "Request handled successfully"}
 
