@@ -24,17 +24,29 @@ app = FastAPI(
 logger = logging.getLogger(__name__)
 
 
-@app.get("/foods", response_model=List[food_schema.Food])
+@app.get(
+    "/foods", 
+    tags=['foods'],
+    response_model=List[food_schema.Food],
+)
 def list_foods(session:Session=Depends(get_db)):
     """Retrieve all food records"""
     return food_service.list(session=session)
 
-@app.post('/create-food/', response_model=food_schema.Food)
+@app.post(
+    '/create-food/', 
+    tags=['foods'],
+    response_model=food_schema.Food
+)
 def create_food(food:food_schema.FoodCreate, session:Session=Depends(get_db)):
     """Create a food instance"""
     return food_service.create(session=session, food=food)
 
-@app.get('/foods/{food_id}/', response_model=Union[food_schema.Food, Dict[str, str]])
+@app.get(
+    '/foods/{food_id}/', 
+    tags=['foods'],
+    response_model=Union[food_schema.Food, Dict[str, str]]
+)
 def get_food(food_id:int, session:Session=Depends(get_db)):
     """Retrieve a unique food instance"""
     try:
@@ -45,7 +57,11 @@ def get_food(food_id:int, session:Session=Depends(get_db)):
             detail="Not Found"
         ) 
 
-@app.delete('/foods/{food_id}/', response_model=Dict[str, str])
+@app.delete(
+    '/foods/{food_id}/', 
+    tags=['foods'],
+    response_model=Dict[str, str]
+)
 def delete_food(food_id:int, session:Session=Depends(get_db)):
     """Deletes a unique food instance"""
     try:
