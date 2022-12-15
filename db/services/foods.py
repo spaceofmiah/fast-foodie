@@ -10,6 +10,16 @@ def list(session: Session):
     """Handles request to retrieve foods"""
     return session.query(food_model.Food).all()
 
+def get(session: Session, food_id:int):
+    """Retrieve a food instance"""
+    return session.query(food_model.Food).filter(food_model.Food.id == food_id).first()
+
+def delete(session: Session, food_id:int):
+    """Delete a unique food instance"""
+    food = get(session, food_id=food_id)
+    session.delete(food)
+    session.commit()
+
 def create(session:Session, food:FoodCreate):
     db_food = food_model.Food(
         name=food.name, 
