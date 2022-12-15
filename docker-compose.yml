@@ -3,8 +3,6 @@ version: "3.9"
 services:
   app:
     build: .
-    volumes:
-      - .:/src
     ports: 
       - "8000:8000"
     networks:
