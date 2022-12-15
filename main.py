@@ -1,9 +1,9 @@
 import logging
-from typing import List, Dict
+from typing import List, Dict, Union
 
 from sqlalchemy.orm import Session
 
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException, status
 
 from db.services import foods as food_service
 from db.schemas import foods as food_schema
@@ -25,14 +25,27 @@ def create_food(food:food_schema.FoodCreate, session:Session=Depends(get_db)):
     """Create a food instance"""
     return food_service.create(session=session, food=food)
 
-@app.get('/foods/{food_id}/', response_model=food_schema.Food)
+@app.get('/foods/{food_id}/', response_model=Union[food_schema.Food, Dict[str, str]])
 def get_food(food_id:int, session:Session=Depends(get_db)):
     """Retrieve a unique food instance"""
-    return food_service.get(session=session, food_id=food_id)
+    try:
+        return food_service.get(session=session, food_id=food_id)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Not Found"
+        ) 
 
 @app.delete('/foods/{food_id}/', response_model=Dict[str, str])
 def delete_food(food_id:int, session:Session=Depends(get_db)):
     """Deletes a unique food instance"""
-    food_service.delete(session=session, food_id=food_id)
+    try:
+        food_service.delete(session=session, food_id=food_id)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Not Found"
+        ) 
+
     return {"msg": "Request handled successfully"}
 

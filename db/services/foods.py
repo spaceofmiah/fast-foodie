@@ -12,7 +12,7 @@ def list(session: Session):
 
 def get(session: Session, food_id:int):
     """Retrieve a food instance"""
-    return session.query(food_model.Food).filter(food_model.Food.id == food_id).first()
+    return session.query(food_model.Food).get(food_model.Food.id == food_id)
 
 def delete(session: Session, food_id:int):
     """Delete a unique food instance"""
