@@ -18,9 +18,13 @@ class FoodBase(BaseModel):
     description: Union[str, None] = None
 
 
+class FoodCreate(FoodBase):
+    pass
+
+
 class Food(FoodBase):
     id: int
-    ingredients: Ingredient
+    ingredients: Sequence[Ingredient] = []
 
     class Config:
         orm_mode: bool = True
