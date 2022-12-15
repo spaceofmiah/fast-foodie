@@ -11,7 +11,16 @@ from db.initializer import get_db
 
 
 
-app = FastAPI()
+app = FastAPI(
+    title="FastFoodie",
+    contact={
+        "name": "spaceofmiah",
+        "email": "spaceofmiah@gmail.com",
+        "url": "https://spaceofmiah.github.io",
+    },
+    description="Learning fastapi using a demo food api standard",
+    terms_of_service="https://github.com/spaceofmiah/fast-foodie",
+)
 logger = logging.getLogger(__name__)
 
 
