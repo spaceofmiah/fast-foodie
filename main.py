@@ -1,6 +1,8 @@
+from typing import List
 import logging
-from typing import Optional, List
+
 from fastapi import FastAPI
+from db.services import food_services
 
 
 app = FastAPI()
@@ -11,7 +13,10 @@ food_db: List[str] = ["German Potatoes Slice", "Gernished Peppered Snake"]
 
 @app.get("/foods")
 def foods():
-    return {"results": food_db}
+    """
+    Handles request to retrieve all meals in the database
+    """
+    return food_services.DQL.retrieve_foods()
 
 
 @app.get("/foods/{id}")
