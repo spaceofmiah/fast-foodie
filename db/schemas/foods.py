@@ -20,7 +20,7 @@ class FoodBase(BaseModel):
 
 class Food(FoodBase):
     id: int
-    ingredients: Sequence[Ingredient]
+    ingredients: Ingredient
 
     class Config:
         orm_mode: bool = True
