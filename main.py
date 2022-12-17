@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 )
 def list_foods(session:Session=Depends(get_db)):
     """Retrieve all food records"""
-    return food_service.list(session=session)
+    return food_service.db_list(session=session)
 
 @app.post(
     '/create-food/', 
@@ -40,18 +40,19 @@ def list_foods(session:Session=Depends(get_db)):
 )
 def create_food(food:food_schema.FoodCreate, session:Session=Depends(get_db)):
     """Create a food instance"""
-    return food_service.create(session=session, food=food)
+    return food_service.db_create(session=session, food=food)
 
 @app.get(
-    '/foods/{food_id}/', 
+    '/foods/{food_id}', 
     tags=['foods'],
-    response_model=Union[food_schema.Food, Dict[str, str]]
+    response_model=food_schema.Food
 )
 def get_food(food_id:int, session:Session=Depends(get_db)):
     """Retrieve a unique food instance"""
     try:
-        return food_service.get(session=session, food_id=food_id)
+        return food_service.db_get(session=session, food_id=food_id)
     except:
+        logger.exception("something went wrong")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Not Found"
@@ -65,12 +66,27 @@ def get_food(food_id:int, session:Session=Depends(get_db)):
 def delete_food(food_id:int, session:Session=Depends(get_db)):
     """Deletes a unique food instance"""
     try:
-        food_service.delete(session=session, food_id=food_id)
+        food_service.db_delete(session=session, food_id=food_id)
     except:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Not Found"
         ) 
 
-    return {"msg": "Request handled successfully"}
+    return {"detail": "Request handled successfully"}
 
+
+@app.put(
+    "/foods/{food_id}/", 
+    response_model=food_schema.Food
+)
+def update_food(food_id:int, food:food_schema.FoodUpdate, session:Session=Depends(get_db)):
+    """Update an existing food instance"""
+    try:
+        db_food:food_model.Food = food_service.db_get(session=session, food_id=food_id)
+    except:
+        logger.exception("Error while retrieving food instance")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not Found")
+
+    food_service.db_update(session=session, food_id=food_id, food=food)
+    return db_food
