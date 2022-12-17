@@ -34,7 +34,7 @@ def list_foods(session:Session=Depends(get_db)):
     return food_service.db_list(session=session)
 
 @app.post(
-    '/create-food/', 
+    '/foods/', 
     tags=['foods'],
     response_model=food_schema.Food
 )
