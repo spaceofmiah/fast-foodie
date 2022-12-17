@@ -29,9 +29,9 @@ logger = logging.getLogger(__name__)
     tags=['foods'],
     response_model=List[food_schema.Food],
 )
-def list_foods(session:Session=Depends(get_db)):
+def list_foods(session:Session=Depends(get_db), q:Union[str, None]=None):
     """Retrieve all food records"""
-    return food_service.db_list(session=session)
+    return food_service.db_list(session=session, query=q)
 
 @app.post(
     '/foods/', 
