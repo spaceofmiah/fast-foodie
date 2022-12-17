@@ -12,8 +12,8 @@ from db.schemas.foods import FoodCreate, FoodUpdate
 def db_list(session: Session, query:Union[str, None]=None):
     """Handles request to retrieve foods"""
     queryset = session.query(food_model.Food)
-    if q: return queryset.filter(food_model.Food.name.contains(query)).all()
-    else: return queryset.all()
+    if query: queryset= queryset.filter(food_model.Food.name.contains(query))
+    return queryset.all()
 
 def db_get(session: Session, food_id:int):
     """Retrieve a food instance"""
