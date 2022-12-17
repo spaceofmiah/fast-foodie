@@ -3,7 +3,7 @@ from typing import List, Dict, Union
 
 from sqlalchemy.orm import Session
 
-from fastapi import FastAPI, Depends, HTTPException, status, Query
+from fastapi import FastAPI, Depends, HTTPException, status, Query, Path
 
 from db.services import foods as food_service
 from db.schemas import foods as food_schema
@@ -29,7 +29,14 @@ logger = logging.getLogger(__name__)
     tags=['foods'],
     response_model=List[food_schema.Food],
 )
-def list_foods(session:Session=Depends(get_db), q:Union[str, None]=Query(default=None)):
+def list_foods(
+    session:Session=Depends(get_db), 
+    q:Union[str, None]=Query(
+        default=None,
+        title="query",
+        description="search & returns food list by name containing query"
+    )
+):
     """Retrieve all food records"""
     return food_service.db_list(session=session, query=q)
 
@@ -47,7 +54,11 @@ def create_food(food:food_schema.FoodCreate, session:Session=Depends(get_db)):
     tags=['foods'],
     response_model=food_schema.Food
 )
-def get_food(food_id:int, session:Session=Depends(get_db)):
+def get_food(
+    *,
+    session:Session=Depends(get_db),
+    food_id:int=Path(default=None, description="ID of the food to retrieve", gt=0), 
+):
     """Retrieve a unique food instance"""
     try:
         return food_service.db_get(session=session, food_id=food_id)
@@ -61,9 +72,13 @@ def get_food(food_id:int, session:Session=Depends(get_db)):
 @app.delete(
     '/foods/{food_id}/', 
     tags=['foods'],
-    response_model=Dict[str, str]
+    response_model=Dict
 )
-def delete_food(food_id:int, session:Session=Depends(get_db)):
+def delete_food(
+    *,
+    session:Session=Depends(get_db),
+    food_id:int=Path(default=None, description="ID of the food to delete", gt=0),  
+):
     """Deletes a unique food instance"""
     try:
         food_service.db_delete(session=session, food_id=food_id)
@@ -81,7 +96,12 @@ def delete_food(food_id:int, session:Session=Depends(get_db)):
     tags=['foods'],
     response_model=food_schema.Food
 )
-def update_food(food_id:int, food:food_schema.FoodUpdate, session:Session=Depends(get_db)):
+def update_food(
+    *,
+    food:food_schema.FoodUpdate, 
+    session:Session=Depends(get_db),
+    food_id:int=Path(default=None, description="ID of the food to update", gt=0), 
+):
     """Update an existing food instance"""
     try:
         db_food:food_model.Food = food_service.db_get(session=session, food_id=food_id)
