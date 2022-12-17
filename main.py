@@ -3,7 +3,7 @@ from typing import List, Dict, Union
 
 from sqlalchemy.orm import Session
 
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, Query
 
 from db.services import foods as food_service
 from db.schemas import foods as food_schema
@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
     tags=['foods'],
     response_model=List[food_schema.Food],
 )
-def list_foods(session:Session=Depends(get_db), q:Union[str, None]=None):
+def list_foods(session:Session=Depends(get_db), q:Union[str, None]=Query(default=None)):
     """Retrieve all food records"""
     return food_service.db_list(session=session, query=q)
 
