@@ -1,3 +1,5 @@
+from typing import Union
+
 from sqlalchemy import update, select
 from sqlalchemy.orm import Session
 from db.initializer import engine
@@ -7,9 +9,11 @@ from db.schemas.foods import FoodCreate, FoodUpdate
 
 
 
-def db_list(session: Session):
+def db_list(session: Session, query:Union[str, None]=None):
     """Handles request to retrieve foods"""
-    return session.query(food_model.Food).all()
+    queryset = session.query(food_model.Food)
+    if q: return queryset.filter(food_model.Food.name.contains(query)).all()
+    else: return queryset.all()
 
 def db_get(session: Session, food_id:int):
     """Retrieve a food instance"""
