@@ -22,6 +22,10 @@ class FoodCreate(FoodBase):
     pass
 
 
+class FoodUpdate(FoodBase):
+    pass
+
+
 class Food(FoodBase):
     id: int
     ingredients: Sequence[Ingredient] = []
