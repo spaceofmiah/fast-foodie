@@ -78,6 +78,7 @@ def delete_food(food_id:int, session:Session=Depends(get_db)):
 
 @app.put(
     "/foods/{food_id}/", 
+    tags=['foods'],
     response_model=food_schema.Food
 )
 def update_food(food_id:int, food:food_schema.FoodUpdate, session:Session=Depends(get_db)):
