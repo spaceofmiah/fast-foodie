@@ -1,5 +1,5 @@
 from typing import Union
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, StrBytes
 
 
 class UserBase(BaseModel):
@@ -9,7 +9,7 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-	hashed_password: str = Field(
+	hashed_password: StrBytes = Field(
 		alias="password",
 		min_length=8
 	)
