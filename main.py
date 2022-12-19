@@ -3,10 +3,17 @@ from typing import List, Dict, Union
 
 from sqlalchemy.orm import Session
 
-from fastapi import FastAPI, Depends, HTTPException, status, Query, Path
+from fastapi import (
+    HTTPException, 
+    FastAPI, 
+    Depends, 
+    status, 
+    Query, 
+    Path
+)
 
-from db.services import foods as food_service
-from db.schemas import foods as food_schema
+from db.services import foods as food_service, users as user_service
+from db.schemas import foods as food_schema, users as user_schema
 from db.initializer import get_db
 
 
@@ -111,3 +118,7 @@ def update_food(
 
     food_service.db_update(session=session, food_id=food_id, food=food)
     return db_food
+
+@app.get('/users', tags=['users'], response_model=List[user_schema.User])
+def list_users(session:Session=Depends(get_db)):
+    return user_service.db_list(session)
