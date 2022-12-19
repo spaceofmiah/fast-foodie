@@ -5,8 +5,11 @@ from sqlalchemy import pool
 
 from alembic import context
 
+from db.initializer import Base
 from settings.dev import DATABASE_URL
-from db.models.foods import Base
+
+from db.models.users import User
+from db.models.foods import Food, Ingredient
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
