@@ -11,6 +11,7 @@ from fastapi import (
     Query, 
     Path
 )
+from fastapi.security import OAuth2PasswordBearer
 
 from db.services import foods as food_service, users as user_service
 from db.schemas import foods as food_schema, users as user_schema
@@ -32,6 +33,9 @@ app = FastAPI(
 logger = logging.getLogger(__name__)
 
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
 @app.get(
     "/foods", 
     tags=['foods'],
@@ -51,9 +55,13 @@ def list_foods(
 @app.post(
     '/foods/', 
     tags=['foods'],
-    response_model=food_schema.Food
+    response_model=food_schema.Food,
 )
-def create_food(food:food_schema.FoodCreate, session:Session=Depends(get_db)):
+def create_food(
+    food:food_schema.FoodCreate, 
+    session:Session=Depends(get_db),
+    token:str = Depends(oauth2_scheme), 
+):
     """Create a food instance"""
     return food_service.db_create(session=session, food=food)
 
@@ -80,10 +88,11 @@ def get_food(
 @app.delete(
     '/foods/{food_id}/', 
     tags=['foods'],
-    response_model=Dict
+    response_model=Dict,
 )
 def delete_food(
     *,
+    token:str = Depends(oauth2_scheme),
     session:Session=Depends(get_db),
     food_id:int=Path(default=None, description="ID of the food to delete", gt=0),  
 ):
@@ -102,10 +111,11 @@ def delete_food(
 @app.put(
     "/foods/{food_id}/", 
     tags=['foods'],
-    response_model=food_schema.Food
+    response_model=food_schema.Food,
 )
 def update_food(
     *,
+    token:str = Depends(oauth2_scheme),
     food:food_schema.FoodUpdate, 
     session:Session=Depends(get_db),
     food_id:int=Path(default=None, description="ID of the food to update", gt=0), 
