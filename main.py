@@ -11,12 +11,12 @@ from fastapi import (
     Query, 
     Path
 )
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from db.services import foods as food_service, users as user_service
 from db.schemas import foods as food_schema, users as user_schema
 from db.initializer import get_db
-from utils.password_utils import hash_password
+from utils import password_utils
 
 
 
@@ -34,6 +34,35 @@ logger = logging.getLogger(__name__)
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+@app.post("/token")
+def login(
+    auth_form:OAuth2PasswordRequestForm=Depends(), 
+    session:Session=Depends(get_db),
+):
+    """Processes user's authentication request
+
+        **username** * : Unique identifier e.g email, username
+        **password** * 
+    """
+    try:
+        user:user_schema.User = user_service.db_get(
+            session=session, email=auth_form.username
+        )
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, 
+            detail="Incorrect credentials"
+        )
+
+    if not password_utils.verify_password(auth_form.password, user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect credentials"
+        )
+
+    return "successfully logged"
 
 
 @app.get(
@@ -152,5 +181,5 @@ def create_user(
 
         **password**   : user's password
     """
-    user.hashed_password = hash_password(user.hashed_password)
+    user.hashed_password = password_utils.hash_password(user.hashed_password)
     return user_service.db_create(session=session, user=user)
