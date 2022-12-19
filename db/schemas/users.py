@@ -9,7 +9,10 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-	hashed_password: str = Field(alias="password")
+	hashed_password: str = Field(
+		alias="password",
+		min_length=8
+	)
 
 
 class User(UserBase):
