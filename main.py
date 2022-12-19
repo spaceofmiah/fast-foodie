@@ -15,6 +15,7 @@ from fastapi import (
 from db.services import foods as food_service, users as user_service
 from db.schemas import foods as food_schema, users as user_schema
 from db.initializer import get_db
+from utils.password_utils import hash_password
 
 
 
@@ -121,4 +122,25 @@ def update_food(
 
 @app.get('/users', tags=['users'], response_model=List[user_schema.User])
 def list_users(session:Session=Depends(get_db)):
+    """Retrieves all available users"""
     return user_service.db_list(session)
+
+
+@app.post('/users', tags=['users'], response_model=user_schema.User)
+def create_user(
+    *,
+    session:Session=Depends(get_db), 
+    user:user_schema.UserCreate
+):
+    """Create a new user
+
+        **first_name** : first name of the user to be created
+
+        **last_name**  : last name of the user to be created
+
+        **email** * : unique email address of user
+
+        **password**   : user's password
+    """
+    user.hashed_password = hash_password(user.hashed_password)
+    return user_service.db_create(session=session, user=user)
