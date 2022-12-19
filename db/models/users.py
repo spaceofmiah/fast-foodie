@@ -1,7 +1,8 @@
 from sqlalchemy import (
+	LargeBinary, 
 	Column, 
 	String, 
-	Integer, 
+	Integer,
 	Boolean, 
 	UniqueConstraint, 
 	PrimaryKeyConstraint
@@ -16,7 +17,7 @@ class User(Base):
 	__tablename__ = "users"
 	email = Column(String(225), nullable=False, unique=True)
 	id = Column(Integer, nullable=False, primary_key=True)
-	hashed_password = Column(String, nullable=False)
+	hashed_password = Column(LargeBinary, nullable=False)
 	first_name = Column(String(225), nullable=False)
 	last_name = Column(String(225), nullable=False)
 	is_active = Column(Boolean, default=False)
