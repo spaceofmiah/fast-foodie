@@ -11,12 +11,13 @@ from fastapi import (
     Query, 
     Path
 )
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm
 
 from db.services import foods as food_service, users as user_service
 from db.schemas import foods as food_schema, users as user_schema
+from settings.dev import TOKEN_URL_PATH
 from db.initializer import get_db
-from utils import password_utils
+from utils import auth
 
 
 
@@ -33,10 +34,7 @@ app = FastAPI(
 logger = logging.getLogger(__name__)
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-
-@app.post("/token")
+@app.post(f"/{TOKEN_URL_PATH}", response_model=Dict[str, str])
 def login(
     auth_form:OAuth2PasswordRequestForm=Depends(), 
     session:Session=Depends(get_db),
@@ -56,14 +54,17 @@ def login(
             detail="Incorrect credentials"
         )
 
-    if not password_utils.verify_password(auth_form.password, user.hashed_password):
+    if not auth.verify_password(auth_form.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect credentials"
         )
 
-    return "successfully logged"
-
+    return auth.tokenize(
+        first_name=user.first_name, 
+        last_name=user.last_name, 
+        email=user.email
+    )
 
 @app.get(
     "/foods", 
@@ -89,7 +90,7 @@ def list_foods(
 def create_food(
     food:food_schema.FoodCreate, 
     session:Session=Depends(get_db),
-    token:str = Depends(oauth2_scheme), 
+    token:str = Depends(auth.oauth2_scheme), 
 ):
     """Create a food instance"""
     return food_service.db_create(session=session, food=food)
@@ -121,7 +122,7 @@ def get_food(
 )
 def delete_food(
     *,
-    token:str = Depends(oauth2_scheme),
+    token:str = Depends(auth.oauth2_scheme),
     session:Session=Depends(get_db),
     food_id:int=Path(default=None, description="ID of the food to delete", gt=0),  
 ):
@@ -136,7 +137,6 @@ def delete_food(
 
     return {"detail": "Request handled successfully"}
 
-
 @app.put(
     "/foods/{food_id}/", 
     tags=['foods'],
@@ -144,7 +144,7 @@ def delete_food(
 )
 def update_food(
     *,
-    token:str = Depends(oauth2_scheme),
+    token:str = Depends(auth.oauth2_scheme),
     food:food_schema.FoodUpdate, 
     session:Session=Depends(get_db),
     food_id:int=Path(default=None, description="ID of the food to update", gt=0), 
@@ -164,7 +164,6 @@ def list_users(session:Session=Depends(get_db)):
     """Retrieves all available users"""
     return user_service.db_list(session)
 
-
 @app.post('/users', tags=['users'], response_model=user_schema.User)
 def create_user(
     *,
@@ -181,5 +180,14 @@ def create_user(
 
         **password**   : user's password
     """
-    user.hashed_password = password_utils.hash_password(user.hashed_password)
+    user.hashed_password = auth.hash_password(user.hashed_password)
     return user_service.db_create(session=session, user=user)
+
+@app.post(
+    '/users/me', 
+    tags=['users'], 
+    response_model=user_schema.User
+)
+def profile(auth_user:user_schema.User=Depends(auth.get_authenticated_user)):
+    """Retrieve the authenticated user profile"""
+    return auth_user
