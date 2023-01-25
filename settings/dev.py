@@ -1,29 +1,26 @@
-import configparser
+import os
 import pathlib
 
 
 # Set application base directory
 BASE_DIR = pathlib.Path(".").absolute()
 
-config = configparser.ConfigParser()
-config.read(BASE_DIR.joinpath("config.ini"))
-
 
 # Database connection url
 DATABASE_URL = (
     "postgresql+psycopg2://{username}:{password}@{host}:{port}/{db_name}".format(
-        host=config["database"]["host"],
-        port=config["database"]["port"],
-        username=config["database"]["username"],
-        password=config["database"]["password"],
-        db_name=config["database"]["database_name"],
+        host=os.environ.get("DATABASE_HOST"),
+        port=os.environ.get("DATABASE_PORT"),
+        db_name=os.environ.get("DATABASE_NAME"),
+        username=os.environ.get("DATABASE_USER"),
+        password=os.environ.get("DATABASE_PASS"),
     )
 )
 
 
 # Application secret key. Should always be kept safe and not to be tracked in
 # a public repository
-SECRET_KEY = config['app']['secret_key']
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # Algorithm to be used in token generation
 TOKEN_ALGORITHM = "HS256"
