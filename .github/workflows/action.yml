@@ -3,8 +3,6 @@ on: push
 jobs:
   codebase-linting:
     runs-on: ubuntu-latest
-    container: python:3.8-alpine
-
     services:
       postgres:
         image: postgres:12-alpine
