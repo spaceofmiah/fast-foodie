@@ -1,0 +1,8 @@
+DATABASE_NAME = xxxx
+DATABASE_USER = xxxx
+DATABASE_PASS = xxxx
+DATABASE_HOST = xxxx
+DATABASE_PORT = xxxx
+
+
+SECRET_KEY = xxxx
