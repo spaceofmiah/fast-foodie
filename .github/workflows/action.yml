@@ -3,9 +3,17 @@ on: push
 jobs:
   codebase-linting:
     runs-on: ubuntu-latest
+    container: python:3.8-alpine
+
+    services:
+      postgres:
+        image: postgres:12-alpine
+        ports:
+          - 5432:5432
+
     strategy:
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
+        python-version: "3.8"
 
 
     steps:
@@ -26,6 +34,12 @@ jobs:
           black .
         
       - name: Test with pytest
+        env:
+          DATABASE_NAME: "postgres"
+          DATABASE_PASS: "postgres"
+          DATABASE_HOST: "localhost"
+          DATABASE_USER: "postgres"
+          DATABASE_PORT:  5432
         run: |
           pytest
   
