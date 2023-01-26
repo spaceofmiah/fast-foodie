@@ -1,4 +1,9 @@
-name: packaging-code
+# Github Action which checks linting practices against
+# best practices and also run test application test to
+# confirm success.
+
+
+name: code linting and testing 
 on: 
   push:
     branches-ignore:
