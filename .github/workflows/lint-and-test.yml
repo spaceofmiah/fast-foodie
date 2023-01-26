@@ -1,8 +1,9 @@
 name: packaging-code
 on: 
   push:
-    branches:
-      - "!main"
+    branches-ignore:
+      - "main"
+
 jobs:
   codebase-linting-testing:
     runs-on: ubuntu-latest
