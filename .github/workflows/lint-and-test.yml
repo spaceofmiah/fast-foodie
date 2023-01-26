@@ -1,7 +1,10 @@
 name: packaging-code
-on: push
+on: 
+  push:
+    branches:
+      - "!main"
 jobs:
-  codebase-linting:
+  codebase-linting-testing:
     runs-on: ubuntu-latest
     services:
       postgres:
