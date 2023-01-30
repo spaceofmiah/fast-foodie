@@ -7,6 +7,13 @@ services:
       - "8000:8000"
     networks:
       - foodapp_network
+    environment:
+      - DATABASE_USER=$DATABASE_USER
+      - DATABASE_HOST=$DATABASE_HOST
+      - DATABASE_PORT=$DATABASE_PORT
+      - DATABASE_PASS=$DATABASE_PASS
+      - DATABASE_NAME=$DATABASE_NAME
+      - SECRET_KEY=$SECRET_KEY
     volumes:
       - .:/home
 
