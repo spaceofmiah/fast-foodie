@@ -1,6 +1,7 @@
-FROM        python:3.8-alpine
+FROM        python:3.9.0-slim-buster
 
-ENV         PYTHONUNBUFFERED=1
+ENV         PYTHONUNBUFFERED 1
+ENV         PYTHONDONTWRITEBYTECODE 1
 
 WORKDIR     /home
 
