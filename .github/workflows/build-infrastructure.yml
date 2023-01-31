@@ -1,0 +1,31 @@
+# Github Action which builds application infrastructure
+# with terraform and make application available for use
+name: build infrastructure
+on:
+  pull_request:
+    workflow_dispatch:
+      branches:
+        - main
+
+jobs:
+  build-infrastructure:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Terraform configuration
+        uses: hashicorp/setup-terraform@v2
+      
+      - name: Terraform format
+        id: fmt
+        run: terraform fmt --check
+      
+      - name: Terraform validate
+        id: validate
+        run: terraform validate -no-color
+
+      - name: Terraform plan 
+        id: plan
+        run: terraform plan -no-color
