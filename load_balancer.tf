@@ -3,8 +3,8 @@ resource "aws_lb" "webapp_backend" {
   load_balancer_type = "application"
   internal           = false
   security_groups    = [aws_security_group.webapp_sg.id, ]
-  subnets            = [
-    aws_subnet.public_sn.id, 
+  subnets = [
+    aws_subnet.public_sn.id,
     aws_subnet.public_sn_1.id
   ]
 }
