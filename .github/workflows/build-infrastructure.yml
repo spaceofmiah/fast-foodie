@@ -36,3 +36,6 @@ jobs:
       - name: Terraform plan 
         id: plan
         run: terraform plan -no-color
+        env:
+          TF_VAR_aws_access_key_id: ${{ secrets.TF_VAR_aws_access_key_id }}
+          TF_VAR_aws_secret_access_key: ${{ secrets.TF_VAR_aws_secret_access_key }}
